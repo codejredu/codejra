@@ -1,0 +1,7 @@
+{
+  "name": "קודי קוד בלי AI",
+  "description": "An empty app",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
