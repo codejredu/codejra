@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
+
+<svg
+   width="45"
+   height="45"
+   viewBox="0 0 90 90"
+   aria-hidden="true"
+   role="img"
+   class="iconify iconify--noto"
+   preserveAspectRatio="xMidYMid"
+   fill="#f3f1f1"
+   stroke="#f3f1f1"
+   version="1.1"
+   id="svg56"
+   sodipodi:docname="controknobs.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs56" />
+  <sodipodi:namedview
+     id="namedview56"
+     pagecolor="#ffffff"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="12.078125"
+     inkscape:cx="28.853816"
+     inkscape:cy="26.701164"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg56" />
+  <g
+     id="SVGRepo_bgCarrier"
+     stroke-width="0" />
+  <g
+     id="SVGRepo_tracerCarrier"
+     stroke-linecap="round"
+     stroke-linejoin="round" />
+  <g
+     id="g28"
+     transform="matrix(1.7061325,0,0,1.7387733,-14.256884,-16.087073)">
+    <circle
+       cx="34.799999"
+       cy="37.23"
+       r="18.82"
+       fill="#757575"
+       opacity="0.7"
+       id="circle14" />
+    <circle
+       cx="34.799999"
+       cy="37.23"
+       r="15.9"
+       fill="#ff6b1a"
+       id="circle15" />
+    <path
+       d="m 46.52,26.48 c -0.41,-0.44 -0.84,-0.85 -1.28,-1.24 l -9.19,8.45 c -0.87,0.8 -0.92,2.14 -0.13,3.01 0.8,0.87 2.14,0.92 3.01,0.13 l 9.12,-8.37 C 47.59,27.77 47.09,27.1 46.52,26.48 Z"
+       fill="#ffffff"
+       id="path15" />
+    <g
+       opacity="0.7"
+       fill="#212121"
+       id="g26">
+      <circle
+         cx="18.209999"
+         cy="53.470001"
+         r="1.76"
+         id="circle16" />
+      <circle
+         cx="12.43"
+         cy="43.990002"
+         r="1.76"
+         id="circle17" />
+      <circle
+         cx="11.61"
+         cy="33.279999"
+         r="1.76"
+         id="circle18" />
+      <circle
+         cx="15.73"
+         cy="23.18"
+         r="1.76"
+         id="circle19" />
+      <circle
+         cx="24.299999"
+         cy="15.87"
+         r="1.76"
+         id="circle20" />
+      <circle
+         cx="34.799999"
+         cy="13.4"
+         r="1.76"
+         id="circle21" />
+      <circle
+         cx="45.310001"
+         cy="15.87"
+         r="1.76"
+         id="circle22" />
+      <circle
+         cx="53.869999"
+         cy="23.18"
+         r="1.76"
+         id="circle23" />
+      <circle
+         cx="58"
+         cy="33.279999"
+         r="1.76"
+         id="circle24" />
+      <circle
+         cx="57.169998"
+         cy="43.990002"
+         r="1.76"
+         id="circle25" />
+      <circle
+         cx="51.400002"
+         cy="53.470001"
+         r="1.76"
+         id="circle26" />
+    </g>
+    <g
+       id="g27">
+      <path
+         d="m 22.42,34.96 c 1.05,-4.51 4.39,-8.47 8.68,-10.22 0.56,-0.23 1.43,-0.2 1.69,0.5 0.31,0.84 0.16,1.41 -0.79,1.95 -2.81,1.61 -5.11,5.07 -5.96,8.6 a 1.855,1.855 0 0 1 -2.33,1.34 C 22.79,36.85 22.2,35.9 22.42,34.96 Z"
+         fill="#1fe605"
+         id="path26" />
+    </g>
+  </g>
+</svg>
