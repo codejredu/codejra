@@ -11,116 +11,116 @@ const ASSET_CATEGORIES = {
     shirt: {
         label: 'חולצות',
         parts: [
-            'assets/parts/shirt1.svg',
-            'assets/parts/shirt2.svg',
-            'assets/parts/shirt3.svg',
-            'assets/parts/shirt4.svg',
-            'assets/parts/shirt5.svg',
+            'https://codejredu.github.io/test/assets/parts/shirt1.svg',
+            'https://codejredu.github.io/test/assets/parts/shirt2.svg',
+            'https://codejredu.github.io/test/assets/parts/shirt3.svg',
+            'https://codejredu.github.io/test/assets/parts/shirt4.svg',
+            'https://codejredu.github.io/test/assets/parts/shirt5.svg',
         ]
     },
      pants: {
         label: 'מכנסיים',
         parts: [
-            'assets/parts/pants1.svg',
-            'assets/parts/pants2.svg',
-            'assets/parts/pants3.svg',
-            'assets/parts/pants4.svg',
-            'assets/parts/pants5.svg',
-            'assets/parts/pants6.svg',
-            'assets/parts/pants7.svg',
-            'assets/parts/pants8.svg',
+            'https://codejredu.github.io/test/assets/parts/pants1.svg',
+            'https://codejredu.github.io/test/assets/parts/pants2.svg',
+            'https://codejredu.github.io/test/assets/parts/pants3.svg',
+            'https://codejredu.github.io/test/assets/parts/pants4.svg',
+            'https://codejredu.github.io/test/assets/parts/pants5.svg',
+            'https://codejredu.github.io/test/assets/parts/pants6.svg',
+            'https://codejredu.github.io/test/assets/parts/pants7.svg',
+            'https://codejredu.github.io/test/assets/parts/pants8.svg',
         ]
     },
     dresses: {
         label: 'שמלות',
         parts: [
-            'assets/parts/drees1.svg',
-            'assets/parts/drees2.svg',
-            'assets/parts/drees3.svg',
-            'assets/parts/drees4.svg',
-            'assets/parts/drees5.svg',
+            'https://codejredu.github.io/test/assets/parts/drees1.svg',
+            'https://codejredu.github.io/test/assets/parts/drees2.svg',
+            'https://codejredu.github.io/test/assets/parts/drees3.svg',
+            'https://codejredu.github.io/test/assets/parts/drees4.svg',
+            'https://codejredu.github.io/test/assets/parts/drees5.svg',
         ]
     },
     shoes: {
         label: 'נעליים',
         parts: [
-            'assets/parts/shoes1.svg',
-            'assets/parts/shoes2.svg',
-            'assets/parts/shoes3.svg',
-            'assets/parts/shoes4.svg',
-            'assets/parts/shoes5.svg',
+            'https://codejredu.github.io/test/assets/parts/shoes1.svg',
+            'https://codejredu.github.io/test/assets/parts/shoes2.svg',
+            'https://codejredu.github.io/test/assets/parts/shoes3.svg',
+            'https://codejredu.github.io/test/assets/parts/shoes4.svg',
+            'https://codejredu.github.io/test/assets/parts/shoes5.svg',
         ]
     },
     head: {
         label: 'ראש',
         parts: [
-            'assets/parts/face1.svg',
-            'assets/parts/face2.svg',
-            'assets/parts/face3.svg',
-            'assets/parts/face4.svg',
-            'assets/parts/face5.svg',
-            'assets/parts/face6.svg',
-            'assets/parts/face7.svg',
-            'assets/parts/face8.svg',
-            'assets/parts/face9.svg',
-            'assets/parts/face10.svg',
-            'assets/parts/face11.svg',
-            'assets/parts/face12.svg',
-            'assets/parts/face13.svg',
-            'assets/parts/face14.svg',
-            'assets/parts/face15.svg',
-            'assets/parts/face16.svg',
-            'assets/parts/face17.svg',
-            'assets/parts/face18.svg',
-            'assets/parts/face19.svg',
-            'assets/parts/face20.svg',
+            'https://codejredu.github.io/test/assets/parts/face1.svg',
+            'https://codejredu.github.io/test/assets/parts/face2.svg',
+            'https://codejredu.github.io/test/assets/parts/face3.svg',
+            'https://codejredu.github.io/test/assets/parts/face4.svg',
+            'https://codejredu.github.io/test/assets/parts/face5.svg',
+            'https://codejredu.github.io/test/assets/parts/face6.svg',
+            'https://codejredu.github.io/test/assets/parts/face7.svg',
+            'https://codejredu.github.io/test/assets/parts/face8.svg',
+            'https://codejredu.github.io/test/assets/parts/face9.svg',
+            'https://codejredu.github.io/test/assets/parts/face10.svg',
+            'https://codejredu.github.io/test/assets/parts/face11.svg',
+            'https://codejredu.github.io/test/assets/parts/face12.svg',
+            'https://codejredu.github.io/test/assets/parts/face13.svg',
+            'https://codejredu.github.io/test/assets/parts/face14.svg',
+            'https://codejredu.github.io/test/assets/parts/face15.svg',
+            'https://codejredu.github.io/test/assets/parts/face16.svg',
+            'https://codejredu.github.io/test/assets/parts/face17.svg',
+            'https://codejredu.github.io/test/assets/parts/face18.svg',
+            'https://codejredu.github.io/test/assets/parts/face19.svg',
+            'https://codejredu.github.io/test/assets/parts/face20.svg',
         ]
     },
     eyes: { 
         label: 'עיניים', 
         parts: [
-            'assets/parts/eye1.svg',
-            'assets/parts/eye2.svg',
-            'assets/parts/eye3.svg',
-            'assets/parts/eye4.svg',
-            'assets/parts/eye5.svg',
-            'assets/parts/eye6.svg',
-            'assets/parts/eye7.svg',
-            'assets/parts/eye8.svg',
+            'https://codejredu.github.io/test/assets/parts/eye1.svg',
+            'https://codejredu.github.io/test/assets/parts/eye2.svg',
+            'https://codejredu.github.io/test/assets/parts/eye3.svg',
+            'https://codejredu.github.io/test/assets/parts/eye4.svg',
+            'https://codejredu.github.io/test/assets/parts/eye5.svg',
+            'https://codejredu.github.io/test/assets/parts/eye6.svg',
+            'https://codejredu.github.io/test/assets/parts/eye7.svg',
+            'https://codejredu.github.io/test/assets/parts/eye8.svg',
         ] 
     },
     nose: {
         label: 'אפים',
         parts: [
-            'assets/parts/Nose1.svg',
-            'assets/parts/Nose2.svg',
-            'assets/parts/Nose3.svg',
-            'assets/parts/Nose4.svg',
-            'assets/parts/Nose5.svg',
-            'assets/parts/Nose6.svg',
-            'assets/parts/Nose7.svg',
+            'https://codejredu.github.io/test/assets/parts/Nose1.svg',
+            'https://codejredu.github.io/test/assets/parts/Nose2.svg',
+            'https://codejredu.github.io/test/assets/parts/Nose3.svg',
+            'https://codejredu.github.io/test/assets/parts/Nose4.svg',
+            'https://codejredu.github.io/test/assets/parts/Nose5.svg',
+            'https://codejredu.github.io/test/assets/parts/Nose6.svg',
+            'https://codejredu.github.io/test/assets/parts/Nose7.svg',
         ]
     },
     mouth: {
         label: 'פה',
         parts: [
-            'assets/parts/mouth1.svg',
-            'assets/parts/mouth2.svg',
-            'assets/parts/mouth3.svg',
-            'assets/parts/mouth4.svg',
-            'assets/parts/mouth5.svg',
-            'assets/parts/mouth6.svg',
-            'assets/parts/mouth7.svg',
+            'https://codejredu.github.io/test/assets/parts/mouth1.svg',
+            'https://codejredu.github.io/test/assets/parts/mouth2.svg',
+            'https://codejredu.github.io/test/assets/parts/mouth3.svg',
+            'https://codejredu.github.io/test/assets/parts/mouth4.svg',
+            'https://codejredu.github.io/test/assets/parts/mouth5.svg',
+            'https://codejredu.github.io/test/assets/parts/mouth6.svg',
+            'https://codejredu.github.io/test/assets/parts/mouth7.svg',
         ]
     },
     hand: {
         label: 'ידיים',
         parts: [
-            'assets/parts/hand1.svg',
-            'assets/parts/hand2.svg',
-            'assets/parts/hand3.svg',
-            'assets/parts/hand4.svg',
-            'assets/parts/hand5.svg',
+            'https://codejredu.github.io/test/assets/parts/hand1.svg',
+            'https://codejredu.github.io/test/assets/parts/hand2.svg',
+            'https://codejredu.github.io/test/assets/parts/hand3.svg',
+            'https://codejredu.github.io/test/assets/parts/hand4.svg',
+            'https://codejredu.github.io/test/assets/parts/hand5.svg',
         ]
     }
 };
@@ -177,7 +177,8 @@ class CharacterCreator {
 
         this.canvas.addEventListener('mousedown', (e) => this.handleCanvasMouseDown(e));
         this.canvas.addEventListener('mousemove', (e) => this.handleCanvasMouseMove(e));
-        document.addEventListener('mouseup', () => this.handleCanvasMouseUp());
+        // FIX: Pass the event object to the handler to avoid using the deprecated global `event`.
+        document.addEventListener('mouseup', (e) => this.handleCanvasMouseUp(e));
         this.canvas.addEventListener('mouseleave', () => this.handleCanvasMouseLeave());
     }
     
@@ -670,18 +671,22 @@ class CharacterCreator {
         this.draw();
     }
     
-    handleCanvasMouseUp() {
+    handleCanvasMouseUp(event) {
+        // FIX: Added event parameter to avoid relying on deprecated global `event`.
         if (this.action.type !== 'none') {
-            const rect = this.canvas.getBoundingClientRect();
-            const { clientX, clientY } = (event.touches ? event.touches[0] : event);
-            const mouseX = clientX - rect.left;
-            const mouseY = clientY - rect.top;
-            
-            const handleInfo = this.selectedPartOnCanvas ? this.getHandleAt(mouseX, mouseY) : null;
-            if (handleInfo) {
-                 this.canvas.style.cursor = handleInfo.handle.cursor;
-            } else if (this.getPartAt(mouseX, mouseY)) {
-                this.canvas.style.cursor = 'grab';
+            // The event object might not be available if mouseup happens outside the browser context.
+            if (event) {
+                const rect = this.canvas.getBoundingClientRect();
+                const { clientX, clientY } = (event.touches ? event.touches[0] : event);
+                const mouseX = clientX - rect.left;
+                const mouseY = clientY - rect.top;
+                
+                const handleInfo = this.selectedPartOnCanvas ? this.getHandleAt(mouseX, mouseY) : null;
+                if (handleInfo) {
+                     this.canvas.style.cursor = handleInfo.handle.cursor;
+                } else if (this.getPartAt(mouseX, mouseY)) {
+                    this.canvas.style.cursor = 'grab';
+                }
             }
         }
         this.action.type = 'none';
