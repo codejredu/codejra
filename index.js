@@ -1,5 +1,4 @@
 
-
 import { initCharacterCreator } from './Caracter.js';
 import { GoogleGenAI } from "@google/genai";
 
@@ -3408,16 +3407,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- AI Wizard Logic ---
-    let ai;
+    let ai = null; // Initialize ai as null by default.
+
+    // This block attempts to initialize the AI. It checks for the necessary environment
+    // variables which are typically only available during a build process, not in a
+    // live browser environment like GitHub Pages.
     try {
-        // FIX: Prevent ReferenceError in browser environments where process is not defined.
-        if (typeof process === 'undefined' || typeof process.env === 'undefined' || !process.env.API_KEY) {
-            throw new Error('Google GenAI API key is not available in process.env. AI features will be disabled.');
+        // `process` is a Node.js global. The `typeof` check prevents a ReferenceError in the browser.
+        if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+            // If the API key is present, initialize the AI client.
+            ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            console.log("Google GenAI initialized successfully.");
+        } else {
+            // If no API key is found, the AI features will be unavailable. This is expected on GitHub Pages.
+            console.log("Google GenAI API key not found. AI features are unavailable.");
         }
-        ai = new GoogleGenAI({apiKey: process.env.API_KEY});
     } catch (e) {
-        console.error("שגיאה באתחול Google GenAI. ייתכן שתכונות ה-AI לא יעבדו. ודא שמפתח ה-API מוגדר בסביבה שלך.", e);
-        ai = null;
+        // Catch any unexpected errors during initialization.
+        console.error("An error occurred during Google GenAI initialization:", e);
+        ai = null; // Ensure ai is null on error.
     }
 
     function createBlocksFromJson(jsonArray, parentConnection) {
@@ -3494,17 +3502,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     aiWizardButton.addEventListener('click', () => {
+        // This function now correctly handles the display logic inside the modal
+        // regardless of whether the AI was initialized.
+        aiWizardModal.classList.remove('hidden'); // Always open the modal first.
+
         if (ai) {
+            // If AI is available, show the prompt interface.
             aiWizardAvailable.classList.remove('hidden');
             aiWizardUnavailable.classList.add('hidden');
-            aiCreateCodeBtn.style.display = ''; // Revert to default display
+            aiCreateCodeBtn.style.display = '';
         } else {
+            // If AI is unavailable, show the explanatory message.
             aiWizardAvailable.classList.add('hidden');
             aiWizardUnavailable.classList.remove('hidden');
-            aiCreateCodeBtn.style.display = 'none'; // Hide the create button
+            aiCreateCodeBtn.style.display = 'none';
         }
-        aiWizardModal.classList.remove('hidden');
     });
+
     aiWizardCloseBtn.addEventListener('click', () => aiWizardModal.classList.add('hidden'));
 
     aiCreateCodeBtn.addEventListener('click', async () => {
