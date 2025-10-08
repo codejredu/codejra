@@ -1,6 +1,5 @@
 
 
-
 import { initCharacterCreator } from './Caracter.js';
 import { GoogleGenAI } from "@google/genai";
 
@@ -347,6 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const aiPromptTextarea = document.getElementById('ai-prompt-textarea');
     const aiWizardLoader = document.getElementById('ai-wizard-loader');
     const aiWizardControls = document.getElementById('ai-wizard-controls');
+    const aiWizardAvailable = document.getElementById('ai-wizard-available');
+    const aiWizardUnavailable = document.getElementById('ai-wizard-unavailable');
     
     // --- Application State ---
     const STAGE_WIDTH = 480;
@@ -3417,14 +3418,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
         console.error("שגיאה באתחול Google GenAI. ייתכן שתכונות ה-AI לא יעבדו. ודא שמפתח ה-API מוגדר בסביבה שלך.", e);
         ai = null;
-        // Disable the button if initialization fails
-        const aiWizardButton = document.getElementById('ai-wizard-button');
-        if (aiWizardButton) {
-            aiWizardButton.disabled = true;
-            aiWizardButton.style.opacity = '0.5';
-            aiWizardButton.style.cursor = 'not-allowed';
-            aiWizardButton.title = 'תכונת ה-AI אינה זמינה';
-        }
     }
 
     function createBlocksFromJson(jsonArray, parentConnection) {
@@ -3500,7 +3493,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    aiWizardButton.addEventListener('click', () => aiWizardModal.classList.remove('hidden'));
+    aiWizardButton.addEventListener('click', () => {
+        if (ai) {
+            aiWizardAvailable.classList.remove('hidden');
+            aiWizardUnavailable.classList.add('hidden');
+            aiCreateCodeBtn.style.display = ''; // Revert to default display
+        } else {
+            aiWizardAvailable.classList.add('hidden');
+            aiWizardUnavailable.classList.remove('hidden');
+            aiCreateCodeBtn.style.display = 'none'; // Hide the create button
+        }
+        aiWizardModal.classList.remove('hidden');
+    });
     aiWizardCloseBtn.addEventListener('click', () => aiWizardModal.classList.add('hidden'));
 
     aiCreateCodeBtn.addEventListener('click', async () => {
@@ -3622,7 +3626,7 @@ Example of a valid response: [{"type":"motion_move_steps","params":{"steps":50}}
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    createNewSprite(file.name.replace(/\.[^/.]+$/, ""), event.target.result);
+                    createNewSprite(file.name.replace(/\.[^/.]+$/, ''), event.target.result);
                 };
                 reader.readAsDataURL(file);
             }
@@ -3630,44 +3634,57 @@ Example of a valid response: [{"type":"motion_move_steps","params":{"steps":50}}
         document.getElementById('close-sprite-gallery-button').addEventListener('click', () => spriteGallery.classList.remove('visible'));
         document.getElementById('sprite-thumbnails-grid').addEventListener('click', handleSpriteGallerySelection);
 
+        // Sound System event listeners
         addSoundButton.addEventListener('click', () => {
             populateSoundGallery();
             selectedSoundsForAdd.clear();
-            document.querySelectorAll('.sound-thumbnail').forEach(t => {
-                t.classList.remove('selected-for-add');
-                t.querySelector('input').checked = false;
-            });
+            document.querySelectorAll('.sound-thumbnail.selected-for-add').forEach(el => el.classList.remove('selected-for-add'));
+            document.querySelectorAll('.sound-thumbnail-checkbox').forEach(cb => cb.checked = false);
             openGallery(soundGallery);
         });
         uploadSoundHeaderButton.addEventListener('click', () => soundUploadInput.click());
-        soundUploadInput.addEventListener('change', e => {
-             const file = e.target.files[0];
-            if (file && getActiveSprite()) {
-                const url = URL.createObjectURL(file);
-                addSoundToSprite(getActiveSprite(), file.name.replace(/\.[^/.]+$/, ""), url);
-                renderSpriteSounds(getActiveSprite());
-                 workspace.refreshToolboxSelection();
+        soundUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const sprite = getActiveSprite();
+            if (file && sprite) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    addSoundToSprite(sprite, file.name, event.target.result);
+                    renderSpriteSounds(sprite);
+                    workspace.refreshToolboxSelection();
+                };
+                reader.readAsDataURL(file);
             }
         });
-        closeSoundGalleryButton.addEventListener('click', () => soundGallery.classList.remove('visible'));
-
-        window.characterCreator = initCharacterCreator({
-            onSave: ({ dataUrl, characterData, editingSpriteId }) => {
-                if (editingSpriteId && sprites[editingSpriteId]) {
-                    const sprite = sprites[editingSpriteId];
-                    sprite.imageUrl = dataUrl;
-                    sprite.characterData = characterData;
-                    
-                    document.querySelector(`.sprite-card[data-sprite-id="${editingSpriteId}"] img`).src = dataUrl;
-                    document.querySelector(`#container-${editingSpriteId} img`).src = dataUrl;
-                    
-                } else {
-                    createNewSprite('דמות חדשה', dataUrl, 0, 0, true, characterData);
-                }
-            },
-            getSprite: (id) => sprites[id]
+        closeSoundGalleryButton.addEventListener('click', () => {
+            if (currentPreviewAudio) {
+                currentPreviewAudio.pause();
+                currentPreviewAudio = null;
+            }
+            soundGallery.classList.remove('visible');
         });
 
+        // Initialize Character Creator
+        window.characterCreator = initCharacterCreator({ 
+            onSave: (result) => {
+                if (result.editingSpriteId && sprites[result.editingSpriteId]) {
+                    // Update existing sprite
+                    const spriteToUpdate = sprites[result.editingSpriteId];
+                    spriteToUpdate.imageUrl = result.dataUrl;
+                    spriteToUpdate.characterData = result.characterData;
+                    
+                    // Update DOM elements
+                    const cardImg = document.querySelector(`.sprite-card[data-sprite-id="${result.editingSpriteId}"] img`);
+                    const stageImg = document.querySelector(`#container-${result.editingSpriteId} .sprite-wrapper img`);
+                    if(cardImg) cardImg.src = result.dataUrl;
+                    if(stageImg) stageImg.src = result.dataUrl;
+                } else {
+                    // Create new sprite
+                    createNewSprite(result.name || 'דמות חדשה', result.dataUrl, 0, 0, true, result.characterData);
+                }
+            },
+            getSprite: (id) => sprites[id] 
+        });
         document.getElementById('create-sprite-header-button').addEventListener('click', () => window.characterCreator.open());
 
         setupPropertiesPanelListeners();
@@ -3676,14 +3693,6 @@ Example of a valid response: [{"type":"motion_move_steps","params":{"steps":50}}
         
         requestAnimationFrame(tick);
     }
-    
-    // Add warning for unsaved changes
-    window.addEventListener('beforeunload', function (e) {
-        // Standard for most browsers.
-        e.preventDefault();
-        // For older browsers.
-        e.returnValue = '';
-    });
 
     init();
 });
