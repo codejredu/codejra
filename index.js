@@ -1,6 +1,6 @@
 
+
 import { initCharacterCreator } from './Caracter.js';
-import { GoogleGenAI } from "@google/genai";
 
 document.addEventListener('DOMContentLoaded', () => {
     // START OF CUSTOM TOOLBOX RENDERER
@@ -346,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const aiWizardLoader = document.getElementById('ai-wizard-loader');
     const aiWizardControls = document.getElementById('ai-wizard-controls');
     const aiWizardAvailable = document.getElementById('ai-wizard-available');
-    const aiWizardUnavailable = document.getElementById('ai-wizard-unavailable');
     
     // --- Application State ---
     const STAGE_WIDTH = 480;
@@ -3407,27 +3406,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- AI Wizard Logic ---
-    let ai = null; // Initialize ai as null by default.
-
-    // This block attempts to initialize the AI. It checks for the necessary environment
-    // variables which are typically only available during a build process, not in a
-    // live browser environment like GitHub Pages.
-    try {
-        // `process` is a Node.js global. The `typeof` check prevents a ReferenceError in the browser.
-        if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-            // If the API key is present, initialize the AI client.
-            ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-            console.log("Google GenAI initialized successfully.");
-        } else {
-            // If no API key is found, the AI features will be unavailable. This is expected on GitHub Pages.
-            console.log("Google GenAI API key not found. AI features are unavailable.");
-        }
-    } catch (e) {
-        // Catch any unexpected errors during initialization.
-        console.error("An error occurred during Google GenAI initialization:", e);
-        ai = null; // Ensure ai is null on error.
-    }
-
     function createBlocksFromJson(jsonArray, parentConnection) {
         let previousConnection = parentConnection;
         jsonArray.forEach(blockData => {
@@ -3502,31 +3480,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     aiWizardButton.addEventListener('click', () => {
-        // This function now correctly handles the display logic inside the modal
-        // regardless of whether the AI was initialized.
-        aiWizardModal.classList.remove('hidden'); // Always open the modal first.
-
-        if (ai) {
-            // If AI is available, show the prompt interface.
-            aiWizardAvailable.classList.remove('hidden');
-            aiWizardUnavailable.classList.add('hidden');
-            aiCreateCodeBtn.style.display = '';
-        } else {
-            // If AI is unavailable, show the explanatory message.
-            aiWizardAvailable.classList.add('hidden');
-            aiWizardUnavailable.classList.remove('hidden');
-            aiCreateCodeBtn.style.display = 'none';
-        }
+        aiWizardModal.classList.remove('hidden');
     });
 
     aiWizardCloseBtn.addEventListener('click', () => aiWizardModal.classList.add('hidden'));
 
     aiCreateCodeBtn.addEventListener('click', async () => {
-        if (!ai) {
-            alert("קוסם ה-AI אינו זמין. ודא שמפתח ה-API הוגדר כראוי בסביבת הפרויקט.");
-            return;
-        }
-
         const promptText = aiPromptTextarea.value.trim();
         if (!promptText) {
             alert("אנא כתוב מה תרצה שהדמות תעשה.");
@@ -3537,34 +3496,19 @@ document.addEventListener('DOMContentLoaded', () => {
         aiWizardLoader.classList.remove('hidden');
     
         try {
-            const systemInstruction = `You are an expert at converting natural language into a sequence of block-based programming steps for a children's coding environment.
-Your entire response must be a single, valid, parsable JSON array of block objects, and nothing else. Do not add any text before or after the JSON array. Do not use markdown code fences.
-Each object in the array represents a block and must have a "type" (string) and a "params" (object).
-You must only use block types from this list: motion_move_steps, motion_turn_right_degrees, motion_turn_left_degrees, looks_say_for_secs, looks_say, looks_show, looks_hide, motion_jump, control_wait_secs, control_repeat_times, control_forever.
-For loop blocks ('control_repeat_times', 'control_forever'), the "params" object must include a "do" key with a value that is an array of the nested block objects.
-Do not generate any event blocks (like "when flag clicked"). The user will attach the generated blocks to an event themselves.
-Example of a valid response: [{"type":"motion_move_steps","params":{"steps":50}},{"type":"control_repeat_times","params":{"times":3,"do":[{"type":"motion_turn_right_degrees","params":{"degrees":90}},{"type":"control_wait_secs","params":{"secs":1}}]}}]`;
-
-    
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: `The user wants the character to: "${promptText}"`,
-                config: {
-                    systemInstruction: systemInstruction,
-                    responseMimeType: "application/json",
-                }
+            // This is the new part: calling our backend proxy
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: promptText }),
             });
             
-            let responseText = response.text.trim();
-            console.log("Gemini Raw Response:", responseText);
-
-            // Even with mimetype, Gemini can sometimes wrap in markdown. This is a robust way to clean it.
-            const jsonMatch = responseText.match(/```(json)?\s*([\s\S]*?)\s*```/);
-            if (jsonMatch) {
-                responseText = jsonMatch[2];
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`שגיאת שרת: ${response.status} - ${errorText}`);
             }
-    
-            const blocksJson = JSON.parse(responseText);
+
+            const blocksJson = await response.json();
             
             if (Array.isArray(blocksJson)) {
                 let y = 50;
@@ -3600,12 +3544,12 @@ Example of a valid response: [{"type":"motion_move_steps","params":{"steps":50}}
                 Blockly.svgResize(workspace);
                 aiWizardModal.classList.add('hidden');
             } else {
-                throw new Error("AI did not return a valid array of blocks.");
+                throw new Error("השרת לא החזיר מערך בלוקים תקין.");
             }
     
         } catch (error) {
             console.error("Error with AI Wizard:", error);
-            alert("אוי, הקוסם התבלבל. נסה שוב או נסח את הבקשה קצת אחרת.");
+            alert("אוי, הקוסם התבלבל. נסה שוב או נסח את הבקשה קצת אחרת. " + error.message);
         } finally {
             aiWizardLoader.classList.add('hidden');
             aiWizardControls.classList.remove('hidden');
