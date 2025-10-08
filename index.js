@@ -1027,7 +1027,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['event_when_flag_clicked'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/flag.svg", 35, 35, { alt: "green flag", flipRtl: false }))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/flag.svg", 35, 35, { alt: "green flag", flipRtl: false }))
                 .appendField('\u00A0'.repeat(12));
             this.setNextStatement(true, null);
             this.setColour("#FFC107");
@@ -1040,7 +1040,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['event_when_sprite_clicked'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/whenprees.svg", 35, 35, "*"))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/whenprees.svg", 35, 35, "*"))
                 .appendField('\u00A0'.repeat(12));
             this.setNextStatement(true, null);
             this.setColour("#FFC107");
@@ -1100,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]
             ];
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/keyboard.svg", 35, 35, { alt: "keyboard icon", flipRtl: false }))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/keyboard.svg", 35, 35, { alt: "keyboard icon", flipRtl: false }))
                 .appendField(new Blockly.FieldDropdown(keyOptions), "KEY")
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setNextStatement(true, null);
@@ -1148,7 +1148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             options.unshift([
                  {
-                    src: 'https://codejredu.github.io/test/assets/blocklyicon/allman.svg',
+                    src: 'assets/blocklyicon/allman.svg',
                     width: 48,
                     height: 48,
                     alt: 'כל דמות',
@@ -1210,7 +1210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['event_when_bump'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/collision.svg", 35, 35, "*"))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/collision.svg", 35, 35, "*"))
                 .appendField(new FieldSprite(), 'TARGET_SPRITE')
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setNextStatement(true, null);
@@ -1224,7 +1224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['event_broadcast'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/send.svg", 35, 35, "*"))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/send.svg", 35, 35, "*"))
                 .appendField(new FieldMessage(), 'MESSAGE')
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setPreviousStatement(true, null);
@@ -1247,7 +1247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['event_when_broadcast_received'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/receive.svg", 35, 35, "*"))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/receive.svg", 35, 35, "*"))
                 .appendField(new FieldMessage(), 'MESSAGE')
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setNextStatement(true, null);
@@ -1260,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['motion_move_steps'] = {
         init: function() {
             this.appendValueInput("STEPS").setCheck("Number").setAlign(Blockly.ALIGN_RIGHT)
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/walk.svg", 34, 34, "*"))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/walk.svg", 34, 34, "*"))
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
@@ -1307,7 +1307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['motion_turn_right_degrees'] = {
         init: function() {
             this.appendValueInput("DEGREES").setCheck("Number")
-                .appendField(new Blockly.FieldImage("https://github.com/codejredu/test/raw/main/assets/blocklyicon/right.png", 34, 34, { alt: "turn right icon", flipRtl: false }))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/right.png", 34, 34, { alt: "turn right icon", flipRtl: false }))
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
@@ -1331,7 +1331,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['motion_turn_left_degrees'] = {
         init: function() {
             this.appendValueInput("DEGREES").setCheck("Number")
-                .appendField(new Blockly.FieldImage("https://github.com/codejredu/test/raw/main/assets/blocklyicon/left.png", 34, 34, { alt: "turn left icon", flipRtl: false }))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/left.png", 34, 34, { alt: "turn left icon", flipRtl: false }))
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
@@ -1365,7 +1365,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/compass.svg", 34, 34, { alt: "compass icon", flipRtl: false }))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/compass.svg", 34, 34, { alt: "compass icon", flipRtl: false }))
                 .appendField(new Blockly.FieldAngle('90', angleValidator), 'DEGREES')
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setInputsInline(true);
@@ -1390,7 +1390,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['looks_say_for_secs'] = {
         init: function() {
             this.appendValueInput("MESSAGE").setCheck("String").setAlign(Blockly.ALIGN_RIGHT)
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/say.png", 34, 34, { alt: "say icon", flipRtl: false }));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/say.png", 34, 34, { alt: "say icon", flipRtl: false }));
             this.appendValueInput("SECS").setCheck("Number").setAlign(Blockly.ALIGN_RIGHT);
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
@@ -1429,7 +1429,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['looks_say'] = {
         init: function() {
             this.appendValueInput("MESSAGE").setCheck("String").setAlign(Blockly.ALIGN_RIGHT)
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/say.png", 34, 34, { alt: "say icon", flipRtl: false }));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/say.png", 34, 34, { alt: "say icon", flipRtl: false }));
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
@@ -1453,7 +1453,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     Blockly.Blocks['looks_show'] = {
         init: function() {
-            this.appendDummyInput().appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/show.png", 34, 34, { alt: "show icon", flipRtl: false })).appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
+            this.appendDummyInput().appendField(new Blockly.FieldImage("assets/blocklyicon/show.png", 34, 34, { alt: "show icon", flipRtl: false })).appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
             this.setColour("#9966FF");
@@ -1472,7 +1472,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     Blockly.Blocks['looks_hide'] = {
         init: function() {
-            this.appendDummyInput().appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/hide.png", 34, 34, { alt: "hide icon", flipRtl: false })).appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
+            this.appendDummyInput().appendField(new Blockly.FieldImage("assets/blocklyicon/hide.png", 34, 34, { alt: "hide icon", flipRtl: false })).appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
             this.setColour("#9966FF");
@@ -1494,7 +1494,7 @@ document.addEventListener('DOMContentLoaded', () => {
         init: function() {
             this.appendValueInput("SIZE")
                 .setCheck("Number")
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/increase.svg", 34, 34, "*"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/increase.svg", 34, 34, "*"));
             this.appendDummyInput().appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
@@ -1521,7 +1521,7 @@ document.addEventListener('DOMContentLoaded', () => {
         init: function() {
             this.appendValueInput("SIZE")
                 .setCheck("Number")
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/decrease.svg", 34, 34, "*"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/decrease.svg", 34, 34, "*"));
             this.appendDummyInput().appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
@@ -1548,7 +1548,7 @@ document.addEventListener('DOMContentLoaded', () => {
         init: function() {
             this.appendValueInput("SIZE")
                 .setCheck("Number")
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/equal.svg", 34, 34, "*"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/equal.svg", 34, 34, "*"));
             this.appendDummyInput().appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
@@ -1635,7 +1635,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['looks_switch_backdrop'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/bg/bgimage.svg", 34, 34, "*"))
+                .appendField(new Blockly.FieldImage("assets/bg/bgimage.svg", 34, 34, "*"))
                 .appendField(new FieldBackdrop(), 'BACKDROP')
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setPreviousStatement(true, null);
@@ -1659,7 +1659,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['looks_change_layer'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/layers.svg", 34, 34, { alt: "layers icon", flipRtl: false }))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/layers.svg", 34, 34, { alt: "layers icon", flipRtl: false }))
                 .appendField(new Blockly.FieldDropdown([
                     [{ src: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19V5'/><path d='m5 12 7-7 7 7'/></svg>`, width: 24, height: 24, alt: 'אחת קדימה' }, 'FORWARD'],
                     [{ src: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M12 5v14'/><path d='m19 12-7 7-7-7'/></svg>`, width: 24, height: 24, alt: 'אחת אחורה' }, 'BACKWARD'],
@@ -1681,7 +1681,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     Blockly.Blocks['control_wait_secs'] = {
         init: function() {
-            this.appendValueInput("SECS").setCheck("Number").setAlign(Blockly.ALIGN_RIGHT).appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/wait.svg", 34, 34, "*"));
+            this.appendValueInput("SECS").setCheck("Number").setAlign(Blockly.ALIGN_RIGHT).appendField(new Blockly.FieldImage("assets/blocklyicon/wait.svg", 34, 34, "*"));
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
@@ -1708,7 +1708,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.appendValueInput("TIMES")
                 .setCheck("Number")
                 .appendField('\u00A0\u00A0\u00A0\u00A0')
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/repeat.svg", 24, 24, "*"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/repeat.svg", 24, 24, "*"));
             this.appendDummyInput().appendField('\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setInputsInline(true);
             this.appendStatementInput("DO").setCheck(null);
@@ -1735,7 +1735,7 @@ document.addEventListener('DOMContentLoaded', () => {
         init: function() {
             this.appendDummyInput()
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0')
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/forever.svg", 36, 36, "*"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/forever.svg", 36, 36, "*"));
             this.appendStatementInput("DO").setCheck(null);
             this.setPreviousStatement(true, null);
             this.setColour("#FF6B1A");
@@ -1755,9 +1755,9 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['motion_go_to_xy'] = {
         init: function() {
             this.appendValueInput("X").setCheck("Number").setAlign(Blockly.ALIGN_RIGHT)
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/iconsx.svg", 24, 24, "X"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/iconsx.svg", 24, 24, "X"));
             this.appendValueInput("Y").setCheck("Number").setAlign(Blockly.ALIGN_RIGHT)
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/iconsy.svg", 24, 24, "Y"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/iconsy.svg", 24, 24, "Y"));
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
@@ -1781,19 +1781,19 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['motion_glide_to_xy'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/surffingEmoji.svg", 34, 34, "גלוש"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/surffingEmoji.svg", 34, 34, "גלוש"));
             this.appendValueInput("SECS")
                 .setCheck("Number")
                 .setAlign(Blockly.ALIGN_RIGHT)
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/wait.svg", 24, 24, "שניות"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/wait.svg", 24, 24, "שניות"));
             this.appendValueInput("X")
                 .setCheck("Number")
                 .setAlign(Blockly.ALIGN_RIGHT)
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/iconsx.svg", 24, 24, "X"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/iconsx.svg", 24, 24, "X"));
             this.appendValueInput("Y")
                 .setCheck("Number")
                 .setAlign(Blockly.ALIGN_RIGHT)
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/iconsy.svg", 24, 24, "Y"));
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/iconsy.svg", 24, 24, "Y"));
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
@@ -1842,7 +1842,7 @@ document.addEventListener('DOMContentLoaded', () => {
         init: function() {
             this.appendValueInput("HEIGHT")
                 .setCheck("Number")
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/jump.svg", 34, 34, { alt: "jump icon", flipRtl: false }))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/jump.svg", 34, 34, { alt: "jump icon", flipRtl: false }))
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
@@ -1964,7 +1964,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['operator_random_number'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/random.svg", 34, 34, "*"))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/random.svg", 34, 34, "*"))
                 .appendField(new FieldCustomNumber(1), "FROM")
                 .appendField(new FieldCustomNumber(10), "TO");
             this.setInputsInline(true);
@@ -1999,7 +1999,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Blockly.Blocks['sound_play_until_done'] = {
         init: function() {
             this.appendDummyInput()
-                .appendField(new Blockly.FieldImage("https://codejredu.github.io/test/assets/blocklyicon/audio.svg", 34, 34, "*"))
+                .appendField(new Blockly.FieldImage("assets/blocklyicon/audio.svg", 34, 34, "*"))
                 .appendField(new FieldSound(), "SOUND")
                 .appendField('\u00A0\u00A0\u00A0\u00A0\u00A0');
             this.setPreviousStatement(true, null);
@@ -2642,14 +2642,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function createDefaultBackdrop() {
-        const url = "https://codejredu.github.io/test/assets/bg/farm.svg";
+        const url = "assets/bg/farm.svg";
         const card = createBackdropCard(url);
         card.classList.add('selected');
         stageArea.style.backgroundImage = `url("${url}")`;
     }
 
     function createDefaultSprite() {
-        const defaultSprite = createNewSprite('חתול', 'https://codejredu.github.io/claudejr/GingerCat.svg', 0, 0);
+        const defaultSprite = createNewSprite('חתול', 'assets/sprite/GingerCat.svg', 0, 0);
     }
 
     function handleBackdropSelection(e) {
@@ -3190,20 +3190,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (soundGalleryGrid.childElementCount > 0) return;
 
         const allSounds = [
-            { name: "Boat Start", url: "https://codejredu.github.io/test/assets/sound/BoatStart.mp3" },
-            { name: "Car Door", url: "https://codejredu.github.io/test/assets/sound/CARDOOR.mp3" },
-            { name: "Elevator Ding", url: "https://codejredu.github.io/test/assets/sound/ElevatorDing.mp3" },
-            { name: "Water Emptying", url: "https://codejredu.github.io/test/assets/sound/WaterEmptying.mp3" },
-            { name: "Water Vole Diving", url: "https://codejredu.github.io/test/assets/sound/WaterVole.mp3" },
-            { name: "Air Land", url: "https://codejredu.github.io/test/assets/sound/airland.mp3" },
-            { name: "Airplane Cessna", url: "https://codejredu.github.io/test/assets/sound/airplanecessna.mp3" },
-            { name: "Airplane F15", url: "https://codejredu.github.io/test/assets/sound/airplanef15.mp3" },
-            { name: "Animal Howl", url: "https://codejredu.github.io/test/assets/sound/animals.mp3" },
-            { name: "Crowd", url: "https://codejredu.github.io/test/assets/sound/crowds.mp3" },
-            { name: "Bird Call", url: "https://codejredu.github.io/test/assets/sound/double.mp3" },
-            { name: "Partridge", url: "https://codejredu.github.io/test/assets/sound/grey.mp3" },
-            { name: "Pygmy Shrew", url: "https://codejredu.github.io/test/assets/sound/pygmy.mp3" },
-            { name: "School", url: "https://codejredu.github.io/test/assets/sound/school.mp3" },
+            { name: "Boat Start", url: "assets/sound/BoatStart.mp3" },
+            { name: "Car Door", url: "assets/sound/CARDOOR.mp3" },
+            { name: "Elevator Ding", url: "assets/sound/ElevatorDing.mp3" },
+            { name: "Water Emptying", url: "assets/sound/WaterEmptying.mp3" },
+            { name: "Water Vole Diving", url: "assets/sound/WaterVole.mp3" },
+            { name: "Air Land", url: "assets/sound/airland.mp3" },
+            { name: "Airplane Cessna", url: "assets/sound/airplanecessna.mp3" },
+            { name: "Airplane F15", url: "assets/sound/airplanef15.mp3" },
+            { name: "Animal Howl", url: "assets/sound/animals.mp3" },
+            { name: "Crowd", url: "assets/sound/crowds.mp3" },
+            { name: "Bird Call", url: "assets/sound/double.mp3" },
+            { name: "Partridge", url: "assets/sound/grey.mp3" },
+            { name: "Pygmy Shrew", url: "assets/sound/pygmy.mp3" },
+            { name: "School", url: "assets/sound/school.mp3" },
         ];
 
         allSounds.forEach(sound => {
@@ -3506,78 +3506,73 @@ Example of a valid response: [{"type":"motion_move_steps","params":{"steps":50}}
     
             const response = await ai.models.generateContent({
                 model: 'gemini-2.5-flash',
-                contents: `The user wants the character to: "${promptText}"`,
+                contents: promptText,
                 config: {
                     systemInstruction: systemInstruction,
                     responseMimeType: "application/json",
                 }
             });
-            
-            let responseText = response.text.trim();
-            console.log("Gemini Raw Response:", responseText);
 
-            // Even with mimetype, Gemini can sometimes wrap in markdown. This is a robust way to clean it.
-            const jsonMatch = responseText.match(/```(json)?\s*([\s\S]*?)\s*```/);
-            if (jsonMatch) {
-                responseText = jsonMatch[2];
-            }
-    
-            const blocksJson = JSON.parse(responseText);
-            
-            if (Array.isArray(blocksJson)) {
-                let y = 50;
-                const topBlocks = workspace.getTopBlocks(true);
-                if (topBlocks.length > 0) {
-                    const lastTopBlock = topBlocks[topBlocks.length-1];
-                    const lastBlockBounds = lastTopBlock.getSvgRoot().getBBox();
-                    y = lastTopBlock.getRelativeToSurfaceXY().y + lastBlockBounds.height + 30;
-                }
-                
-                let lastBlockInChain = null;
-                blocksJson.forEach(blockData => {
-                    const newBlock = createBlock(blockData);
-                    if (newBlock) { // Only proceed if block was created successfully
-                        if (lastBlockInChain) {
-                            if (lastBlockInChain.nextConnection) {
-                                lastBlockInChain.nextConnection.connect(newBlock.previousConnection);
-                            }
-                        } else {
-                            newBlock.moveTo(new Blockly.utils.Coordinate(50, y));
-                        }
-                        
-                        // Find the new end of the chain, which might include nested blocks
-                        let current = newBlock;
-                        while(current.getNextBlock()) {
-                            current = current.getNextBlock();
-                        }
-                        lastBlockInChain = current;
-                    }
-                });
+            const jsonText = response.text;
+            const blockDefs = JSON.parse(jsonText);
 
-                workspace.render();
-                Blockly.svgResize(workspace);
-                aiWizardModal.classList.add('hidden');
-            } else {
-                throw new Error("AI did not return a valid array of blocks.");
+            const existingTopBlocks = workspace.getTopBlocks(true);
+            let lowestY = 0;
+            if (existingTopBlocks.length > 0) {
+                lowestY = Math.max(...existingTopBlocks.map(b => b.getRelativeToSurfaceXY().y + b.getHeightWidth().height));
             }
-    
+
+            createBlocksFromJson(blockDefs, null);
+
+            // Find the new top block that was just created
+            const allTopBlocks = workspace.getTopBlocks(true);
+            const newTopBlock = allTopBlocks.find(b => !existingTopBlocks.includes(b));
+
+            if (newTopBlock) {
+                const x = 20;
+                const y = lowestY > 0 ? lowestY + 20 : 20;
+                newTopBlock.moveBy(x, y);
+            }
+            
+            aiWizardModal.classList.add('hidden');
+
         } catch (error) {
-            console.error("Error with AI Wizard:", error);
-            alert("אוי, הקוסם התבלבל. נסה שוב או נסח את הבקשה קצת אחרת.");
+            console.error("AI Wizard Error:", error);
+            alert("אופס! קוסם ה-AI נתקל בבעיה. נסה שוב.");
         } finally {
             aiWizardLoader.classList.add('hidden');
             aiWizardControls.classList.remove('hidden');
-            aiPromptTextarea.value = '';
         }
     });
 
+    // --- Initialization ---
+    function initializeGalleries() {
+        // Sprites
+        document.getElementById('add-sprite-button').addEventListener('click', () => openGallery(spriteGallery));
+        document.getElementById('close-sprite-gallery-button').addEventListener('click', () => spriteGallery.classList.remove('visible'));
+        document.getElementById('sprite-thumbnails-grid').addEventListener('click', handleSpriteGallerySelection);
+        const spriteUploadInput = document.getElementById('sprite-upload-input');
+        document.getElementById('upload-sprite-header-button').addEventListener('click', () => spriteUploadInput.click());
+        spriteUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    createNewSprite(file.name.replace(/\.[^/.]+$/, ""), event.target.result);
+                };
+                reader.readAsDataURL(file);
+                spriteGallery.classList.remove('visible');
+            }
+        });
 
-    // --- General Initialization ---
-    function init() {
-        backdropsList.addEventListener('click', handleBackdropSelection);
+        // Backdrops
         document.getElementById('add-backdrop-button').addEventListener('click', () => openGallery(backgroundGallery));
-        document.getElementById('upload-backdrop-header-button').addEventListener('click', () => document.getElementById('backdrop-upload-input').click());
-        document.getElementById('backdrop-upload-input').addEventListener('change', (e) => {
+        document.getElementById('close-gallery-button').addEventListener('click', () => backgroundGallery.classList.remove('visible'));
+        document.getElementById('thumbnails-grid').addEventListener('click', handleGallerySelection);
+        backdropsList.addEventListener('click', handleBackdropSelection);
+        const backdropUploadInput = document.getElementById('backdrop-upload-input');
+        document.getElementById('upload-backdrop-header-button').addEventListener('click', () => backdropUploadInput.click());
+        backdropUploadInput.addEventListener('change', (e) => {
              const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
@@ -3586,80 +3581,60 @@ Example of a valid response: [{"type":"motion_move_steps","params":{"steps":50}}
                     window.switchBackdrop(event.target.result);
                 };
                 reader.readAsDataURL(file);
+                backgroundGallery.classList.remove('visible');
             }
         });
-        document.getElementById('close-gallery-button').addEventListener('click', () => backgroundGallery.classList.remove('visible'));
-        document.getElementById('thumbnails-grid').addEventListener('click', handleGallerySelection);
         
-        document.getElementById('add-sprite-button').addEventListener('click', () => openGallery(spriteGallery));
-        document.getElementById('upload-sprite-header-button').addEventListener('click', () => document.getElementById('sprite-upload-input').click());
-        document.getElementById('sprite-upload-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    createNewSprite(file.name.replace(/\.[^/.]+$/, ""), event.target.result);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        document.getElementById('close-sprite-gallery-button').addEventListener('click', () => spriteGallery.classList.remove('visible'));
-        document.getElementById('sprite-thumbnails-grid').addEventListener('click', handleSpriteGallerySelection);
-
+        // Sounds
         addSoundButton.addEventListener('click', () => {
             populateSoundGallery();
             selectedSoundsForAdd.clear();
-            document.querySelectorAll('.sound-thumbnail').forEach(t => {
-                t.classList.remove('selected-for-add');
-                t.querySelector('input').checked = false;
-            });
+            document.querySelectorAll('.sound-thumbnail.selected-for-add').forEach(el => el.classList.remove('selected-for-add'));
+            document.querySelectorAll('.sound-thumbnail-checkbox').forEach(cb => cb.checked = false);
             openGallery(soundGallery);
         });
+        closeSoundGalleryButton.addEventListener('click', () => soundGallery.classList.remove('visible'));
         uploadSoundHeaderButton.addEventListener('click', () => soundUploadInput.click());
-        soundUploadInput.addEventListener('change', e => {
-             const file = e.target.files[0];
-            if (file && getActiveSprite()) {
+        soundUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const sprite = getActiveSprite();
+            if (file && sprite) {
                 const url = URL.createObjectURL(file);
-                addSoundToSprite(getActiveSprite(), file.name.replace(/\.[^/.]+$/, ""), url);
-                renderSpriteSounds(getActiveSprite());
-                 workspace.refreshToolboxSelection();
+                const name = file.name.replace(/\.[^/.]+$/, "");
+                addSoundToSprite(sprite, name, url);
+                renderSpriteSounds(sprite);
+                workspace.refreshToolboxSelection();
             }
         });
-        closeSoundGalleryButton.addEventListener('click', () => soundGallery.classList.remove('visible'));
-
-        window.characterCreator = initCharacterCreator({
-            onSave: ({ dataUrl, characterData, editingSpriteId }) => {
-                if (editingSpriteId && sprites[editingSpriteId]) {
-                    const sprite = sprites[editingSpriteId];
-                    sprite.imageUrl = dataUrl;
-                    sprite.characterData = characterData;
-                    
-                    document.querySelector(`.sprite-card[data-sprite-id="${editingSpriteId}"] img`).src = dataUrl;
-                    document.querySelector(`#container-${editingSpriteId} img`).src = dataUrl;
-                    
-                } else {
-                    createNewSprite('דמות חדשה', dataUrl, 0, 0, true, characterData);
-                }
-            },
-            getSprite: (id) => sprites[id]
-        });
-
-        document.getElementById('create-sprite-header-button').addEventListener('click', () => window.characterCreator.open());
-
-        setupPropertiesPanelListeners();
-        createDefaultBackdrop();
-        createDefaultSprite();
-        
-        requestAnimationFrame(tick);
     }
-    
-    // Add warning for unsaved changes
-    window.addEventListener('beforeunload', function (e) {
-        // Standard for most browsers.
-        e.preventDefault();
-        // For older browsers.
-        e.returnValue = '';
-    });
 
-    init();
+    // Initialize character creator
+    window.characterCreator = initCharacterCreator({ 
+        onSave: ({ name, dataUrl, characterData, editingSpriteId }) => {
+            if (editingSpriteId) {
+                const spriteToUpdate = sprites[editingSpriteId];
+                if (spriteToUpdate) {
+                    spriteToUpdate.imageUrl = dataUrl;
+                    spriteToUpdate.characterData = characterData;
+                    // Update sprite card image
+                    const cardImg = document.querySelector(`.sprite-card[data-sprite-id="${editingSpriteId}"] img`);
+                    if (cardImg) cardImg.src = dataUrl;
+                    // Update stage sprite image
+                    const stageImg = document.querySelector(`#container-${editingSpriteId} img`);
+                    if (stageImg) stageImg.src = dataUrl;
+                }
+            } else {
+                 createNewSprite(name || 'דמות חדשה', dataUrl, 0, 0, true, characterData);
+            }
+        },
+        getSprite: (id) => sprites[id]
+    });
+    document.getElementById('create-sprite-header-button').addEventListener('click', () => window.characterCreator.open());
+
+    // --- App Start ---
+    setupPropertiesPanelListeners();
+    initializeGalleries();
+    createDefaultBackdrop();
+    createDefaultSprite();
+    requestAnimationFrame(tick);
 });
