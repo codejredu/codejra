@@ -177,8 +177,7 @@ class CharacterCreator {
 
         this.canvas.addEventListener('mousedown', (e) => this.handleCanvasMouseDown(e));
         this.canvas.addEventListener('mousemove', (e) => this.handleCanvasMouseMove(e));
-        // FIX: Pass the event object to the handler to avoid using the deprecated global `event`.
-        document.addEventListener('mouseup', (e) => this.handleCanvasMouseUp(e));
+        document.addEventListener('mouseup', () => this.handleCanvasMouseUp());
         this.canvas.addEventListener('mouseleave', () => this.handleCanvasMouseLeave());
     }
     
@@ -671,22 +670,18 @@ class CharacterCreator {
         this.draw();
     }
     
-    handleCanvasMouseUp(event) {
-        // FIX: Added event parameter to avoid relying on deprecated global `event`.
+    handleCanvasMouseUp() {
         if (this.action.type !== 'none') {
-            // The event object might not be available if mouseup happens outside the browser context.
-            if (event) {
-                const rect = this.canvas.getBoundingClientRect();
-                const { clientX, clientY } = (event.touches ? event.touches[0] : event);
-                const mouseX = clientX - rect.left;
-                const mouseY = clientY - rect.top;
-                
-                const handleInfo = this.selectedPartOnCanvas ? this.getHandleAt(mouseX, mouseY) : null;
-                if (handleInfo) {
-                     this.canvas.style.cursor = handleInfo.handle.cursor;
-                } else if (this.getPartAt(mouseX, mouseY)) {
-                    this.canvas.style.cursor = 'grab';
-                }
+            const rect = this.canvas.getBoundingClientRect();
+            const { clientX, clientY } = (event.touches ? event.touches[0] : event);
+            const mouseX = clientX - rect.left;
+            const mouseY = clientY - rect.top;
+            
+            const handleInfo = this.selectedPartOnCanvas ? this.getHandleAt(mouseX, mouseY) : null;
+            if (handleInfo) {
+                 this.canvas.style.cursor = handleInfo.handle.cursor;
+            } else if (this.getPartAt(mouseX, mouseY)) {
+                this.canvas.style.cursor = 'grab';
             }
         }
         this.action.type = 'none';

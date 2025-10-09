@@ -1,5 +1,3 @@
-
-
 import { initCharacterCreator } from './Caracter.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -336,16 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const recorderAudioPreview = document.getElementById('recorder-audio-preview');
     const recorderPreviewContainer = document.getElementById('recorder-preview-container');
     const recorderSoundName = document.getElementById('recorder-sound-name');
-
-    // --- AI Wizard Elements ---
-    const aiWizardButton = document.getElementById('ai-wizard-button');
-    const aiWizardModal = document.getElementById('ai-wizard-modal');
-    const aiWizardCloseBtn = document.getElementById('ai-wizard-close-btn');
-    const aiCreateCodeBtn = document.getElementById('ai-create-code-btn');
-    const aiPromptTextarea = document.getElementById('ai-prompt-textarea');
-    const aiWizardLoader = document.getElementById('ai-wizard-loader');
-    const aiWizardControls = document.getElementById('ai-wizard-controls');
-    const aiWizardAvailable = document.getElementById('ai-wizard-available');
     
     // --- Application State ---
     const STAGE_WIDTH = 480;
@@ -373,6 +361,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let recorderTimerInterval = null;
     let recordedBlob = null;
     
+    // --- Script Copy Drag/Drop State ---
+    let isDraggingBlockForCopy = false;
+    let draggedBlockXml = null;
+    let sourceSpriteIdForCopy = null;
+    let hoveredSpriteIdForDrop = null;
+
     const log = (message) => {
         console.log(message);
     };
@@ -586,8 +580,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'left-right':
                     // Normalize direction to [0, 360)
                     const normalizedDir = ((spriteData.direction % 360) + 360) % 360;
-                    // Flip when direction is pointing left-ish (in the range (90, 270))
-                    const isFlipped = normalizedDir > 90 && normalizedDir < 270;
+                    // Flip when direction is 180-359
+                    const isFlipped = normalizedDir >= 180 && normalizedDir <= 359;
                     rotationTransform = isFlipped ? 'scaleX(-1)' : 'scaleX(1)';
                     break;
                 case 'dont-rotate':
@@ -2082,6 +2076,81 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    /**
+     * Handles highlighting sprite cards when a block is dragged over them.
+     * @param {MouseEvent} e The mouse move event.
+     */
+    function handleBlockDragHover(e) {
+        if (!isDraggingBlockForCopy) return;
+    
+        let currentlyHoveredId = null;
+    
+        document.querySelectorAll('.sprite-card').forEach(card => {
+            const cardId = card.dataset.spriteId;
+            if (cardId === sourceSpriteIdForCopy) {
+                card.classList.remove('drop-target-hover');
+                return; // Skip the source sprite
+            }
+    
+            const rect = card.getBoundingClientRect();
+            if (e.clientX >= rect.left && e.clientX <= rect.right &&
+                e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                card.classList.add('drop-target-hover');
+                currentlyHoveredId = cardId;
+            } else {
+                card.classList.remove('drop-target-hover');
+            }
+        });
+    
+        hoveredSpriteIdForDrop = currentlyHoveredId;
+    }
+
+    /**
+     * Handles copying the script when a block is dropped on a sprite card.
+     * @param {MouseEvent} e The mouse up event.
+     */
+    function handleBlockDrop(e) {
+        if (!isDraggingBlockForCopy) return;
+    
+        if (hoveredSpriteIdForDrop) {
+            const targetSprite = sprites[hoveredSpriteIdForDrop];
+            if (targetSprite) {
+                const tempWorkspace = new Blockly.Workspace();
+                try {
+                    // Load existing blocks
+                    if (targetSprite.workspaceXml) {
+                        const dom = Blockly.Xml.textToDom(targetSprite.workspaceXml);
+                        Blockly.Xml.domToWorkspace(dom, tempWorkspace);
+                    }
+    
+                    // Add the new block stack
+                    Blockly.Xml.domToBlock(draggedBlockXml, tempWorkspace);
+    
+                    // Save the combined workspace
+                    const newXmlDom = Blockly.Xml.workspaceToDom(tempWorkspace);
+                    targetSprite.workspaceXml = Blockly.Xml.domToText(newXmlDom);
+    
+                    log(`Script copied from ${sprites[sourceSpriteIdForCopy].name} to ${targetSprite.name}.`);
+                } catch(error) {
+                    console.error("Error copying script:", error);
+                } finally {
+                    tempWorkspace.dispose();
+                }
+            }
+        }
+    
+        // Cleanup
+        document.removeEventListener('mousemove', handleBlockDragHover);
+        isDraggingBlockForCopy = false;
+        draggedBlockXml = null;
+        sourceSpriteIdForCopy = null;
+        hoveredSpriteIdForDrop = null;
+    
+        document.querySelectorAll('.sprite-card.drop-target-hover').forEach(card => {
+            card.classList.remove('drop-target-hover');
+        });
+    }
+
     workspace.addChangeListener((event) => {
         if (event.type === Blockly.Events.BLOCK_MOVE) {
             const numberPad = document.getElementById('number-pad-container');
@@ -2090,6 +2159,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (event.blockId === fieldBlockId) {
                     positionNumberPad(numberPad.currentField);
                 }
+            }
+        }
+        
+        if (event.type === Blockly.Events.BLOCK_DRAG && event.isStart) {
+            const block = workspace.getBlockById(event.blockId);
+            // We only care about dragging top-level blocks (the start of a script)
+            if (block && !block.getParent()) {
+                isDraggingBlockForCopy = true;
+                sourceSpriteIdForCopy = activeSpriteId;
+                draggedBlockXml = Blockly.Xml.blockToDom(block);
+                
+                // Add listeners to the whole document to catch the drop anywhere
+                document.addEventListener('mousemove', handleBlockDragHover);
+                document.addEventListener('mouseup', handleBlockDrop, { once: true });
             }
         }
     });
@@ -3211,58 +3294,55 @@ document.addEventListener('DOMContentLoaded', () => {
             thumb.className = 'sound-thumbnail';
             thumb.dataset.url = sound.url;
             thumb.dataset.name = sound.name;
-
             thumb.innerHTML = `
                 <input type="checkbox" class="sound-thumbnail-checkbox">
-                <svg xmlns="http://www.w3.org/2000/svg" class="sound-thumbnail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                <svg class="sound-thumbnail-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                 </svg>
                 <span class="sound-thumbnail-name">${sound.name}</span>
             `;
-
-            const checkbox = thumb.querySelector('.sound-thumbnail-checkbox');
-
             thumb.addEventListener('click', (e) => {
-                if (e.target !== checkbox) {
-                    playPreviewSound(sound.url);
-                }
-            });
-            
-            checkbox.addEventListener('change', () => {
-                if (checkbox.checked) {
-                    selectedSoundsForAdd.add(sound);
-                    thumb.classList.add('selected-for-add');
+                if (e.target.type === 'checkbox') {
+                    // Handle checkbox click
+                    if (e.target.checked) {
+                        selectedSoundsForAdd.add(sound.url);
+                        thumb.classList.add('selected-for-add');
+                    } else {
+                        selectedSoundsForAdd.delete(sound.url);
+                        thumb.classList.remove('selected-for-add');
+                    }
                 } else {
-                    selectedSoundsForAdd.delete(sound);
-                    thumb.classList.remove('selected-for-add');
+                    // Handle thumbnail click (play preview)
+                    if (currentPreviewAudio && !currentPreviewAudio.paused) {
+                        currentPreviewAudio.pause();
+                        if (currentPreviewAudio.src === sound.url) {
+                            currentPreviewAudio = null;
+                            return;
+                        }
+                    }
+                    currentPreviewAudio = new Audio(sound.url);
+                    currentPreviewAudio.play();
                 }
             });
-
             soundGalleryGrid.appendChild(thumb);
         });
     }
 
-    function playPreviewSound(url) {
-        if (currentPreviewAudio) {
-            currentPreviewAudio.pause();
-        }
-        currentPreviewAudio = new Audio(url);
-        currentPreviewAudio.play().catch(e => console.error("Error playing sound preview:", e));
+    function addSoundsToSprite(sprite, sounds) {
+        sounds.forEach(sound => {
+            if (!sprite.sounds.some(s => s.url === sound.url)) {
+                sprite.sounds.push(sound);
+            }
+        });
+        renderSpriteSounds(sprite);
+        workspace.refreshToolboxSelection();
     }
-
-    addSelectedSoundsButton.addEventListener('click', () => {
-        const sprite = getActiveSprite();
-        if (sprite) {
-            selectedSoundsForAdd.forEach(sound => {
-                if (!sprite.sounds.some(s => s.url === sound.url)) {
-                    addSoundToSprite(sprite, sound.name, sound.url);
-                }
-            });
-            renderSpriteSounds(sprite);
-            workspace.refreshToolboxSelection();
-        }
-        soundGallery.classList.remove('visible');
-    });
+    
+    function deleteSoundFromSprite(sprite, soundUrl) {
+        sprite.sounds = sprite.sounds.filter(s => s.url !== soundUrl);
+        renderSpriteSounds(sprite);
+        workspace.refreshToolboxSelection();
+    }
 
     function renderSpriteSounds(sprite) {
         soundsList.innerHTML = '';
@@ -3271,386 +3351,296 @@ document.addEventListener('DOMContentLoaded', () => {
         sprite.sounds.forEach(sound => {
             const card = document.createElement('div');
             card.className = 'sound-card';
+            card.dataset.url = sound.url;
             card.innerHTML = `
-                <div class="delete-button">&times;</div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="sound-card-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                <div class="delete-button">X</div>
+                <svg class="sound-card-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                 </svg>
-                <div class="sound-card-name">${sound.name}</div>
+                <span class="sound-card-name">${sound.name}</span>
             `;
             card.querySelector('.delete-button').addEventListener('click', (e) => {
                 e.stopPropagation();
                 deleteSoundFromSprite(sprite, sound.url);
             });
             card.addEventListener('click', () => {
-                playPreviewSound(sound.url);
+                const audio = new Audio(sound.url);
+                audio.play();
             });
             soundsList.appendChild(card);
         });
     }
 
-    function addSoundToSprite(sprite, name, url) {
-        if (!sprite.sounds) sprite.sounds = [];
-        sprite.sounds.push({ name, url });
-    }
+    addSoundButton.addEventListener('click', () => {
+        populateSoundGallery();
+        openGallery(soundGallery);
+        selectedSoundsForAdd.clear();
+        soundGalleryGrid.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        soundGalleryGrid.querySelectorAll('.sound-thumbnail').forEach(t => t.classList.remove('selected-for-add'));
+    });
     
-    function deleteSoundFromSprite(sprite, url) {
-        sprite.sounds = sprite.sounds.filter(s => s.url !== url);
-        renderSpriteSounds(sprite);
-        workspace.refreshToolboxSelection();
-    }
+    closeSoundGalleryButton.addEventListener('click', () => {
+        soundGallery.classList.remove('visible');
+        if (currentPreviewAudio) {
+            currentPreviewAudio.pause();
+            currentPreviewAudio = null;
+        }
+    });
+
+    addSelectedSoundsButton.addEventListener('click', () => {
+        const sprite = getActiveSprite();
+        if (!sprite) return;
+
+        const soundsToAdd = [];
+        selectedSoundsForAdd.forEach(url => {
+            const thumb = soundGalleryGrid.querySelector(`.sound-thumbnail[data-url="${url}"]`);
+            if (thumb) {
+                soundsToAdd.push({ name: thumb.dataset.name, url: url });
+            }
+        });
+
+        addSoundsToSprite(sprite, soundsToAdd);
+        soundGallery.classList.remove('visible');
+    });
 
     // --- Sound Recorder Logic ---
-    async function initSoundRecorder() {
+
+    function showRecorderMessage(msg, isError = true) {
+        recorderMessage.textContent = msg;
+        recorderMessage.className = `w-full text-center p-3 rounded-lg border ${isError ? 'bg-red-100 text-red-700 border-red-200' : 'bg-green-100 text-green-700 border-green-200'}`;
+        recorderMessage.classList.remove('hidden');
+    }
+    
+    function hideRecorderMessage() {
+         recorderMessage.classList.add('hidden');
+    }
+
+    async function startRecording() {
+        hideRecorderMessage();
         try {
             mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            recorderMessage.classList.add('hidden');
-            recorderUIContent.classList.remove('hidden');
             mediaRecorder = new MediaRecorder(mediaStream);
-
-            mediaRecorder.ondataavailable = e => {
-                audioChunks.push(e.data);
+            audioChunks = [];
+            
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
             };
 
             mediaRecorder.onstop = () => {
-                recordedBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
                 const audioUrl = URL.createObjectURL(recordedBlob);
                 recorderAudioPreview.src = audioUrl;
-                recorderPreviewContainer.classList.remove('hidden');
+                updateRecorderUI('preview');
+                mediaStream.getTracks().forEach(track => track.stop());
             };
 
-        } catch (err) {
-            recorderMessage.textContent = 'נדרשת גישה למיקרופון כדי להקליט.';
-            recorderMessage.classList.remove('hidden');
-            recorderUIContent.classList.add('hidden');
-        }
-    }
-
-    function startRecording() {
-        if (!mediaRecorder) return;
-        audioChunks = [];
-        recordedBlob = null;
-        mediaRecorder.start();
-        recorderVisualizer.classList.add('is-recording');
-        
-        let startTime = Date.now();
-        recorderTimerInterval = setInterval(() => {
-            const elapsedTime = (Date.now() - startTime) / 1000;
-            recorderTimer.textContent = `${elapsedTime.toFixed(1)} / 15.0`;
-            if (elapsedTime >= 15) {
-                stopRecording();
-            }
-        }, 100);
-
-        recorderRecordBtn.classList.add('hidden');
-        recorderStopBtn.classList.remove('hidden');
-    }
-
-    function stopRecording() {
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-            mediaRecorder.stop();
-            recorderVisualizer.classList.remove('is-recording');
-            clearInterval(recorderTimerInterval);
+            mediaRecorder.start();
+            updateRecorderUI('recording');
             
-            recorderStopBtn.classList.add('hidden');
-            recorderRerecordBtn.classList.remove('hidden');
-            recorderSaveBtn.classList.remove('hidden');
+            let seconds = 0;
+            recorderTimer.textContent = `0.0 / 15.0`;
+            recorderTimerInterval = setInterval(() => {
+                seconds += 0.1;
+                recorderTimer.textContent = `${seconds.toFixed(1)} / 15.0`;
+                if (seconds >= 15) {
+                    stopRecording();
+                }
+            }, 100);
+
+        } catch (err) {
+            console.error("Error starting recording:", err);
+            showRecorderMessage('לא ניתן לגשת למיקרופון. אנא בדוק הרשאות.');
+            updateRecorderUI('idle');
         }
     }
     
-    function resetRecorderUI() {
-        recorderPreviewContainer.classList.add('hidden');
-        recorderAudioPreview.src = '';
-        recorderRecordBtn.classList.remove('hidden');
-        recorderStopBtn.classList.add('hidden');
-        recorderRerecordBtn.classList.add('hidden');
-        recorderSaveBtn.classList.add('hidden');
-        recorderTimer.textContent = '0.0 / 15.0';
-        recorderSoundName.value = '';
-        recordedBlob = null;
-        audioChunks = [];
+    function stopRecording() {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+        }
+        clearInterval(recorderTimerInterval);
+    }
+    
+    function saveRecording() {
+        const sprite = getActiveSprite();
+        const soundName = recorderSoundName.value.trim() || `הקלטה ${sprite.sounds.length + 1}`;
+        if (recordedBlob && sprite) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const dataUrl = event.target.result;
+                addSoundsToSprite(sprite, [{ name: soundName, url: dataUrl }]);
+                soundRecorderModal.classList.add('hidden');
+                updateRecorderUI('idle');
+            };
+            reader.readAsDataURL(recordedBlob);
+        }
     }
 
+    function updateRecorderUI(state) {
+        recorderRecordBtn.classList.toggle('hidden', state !== 'idle');
+        recorderStopBtn.classList.toggle('hidden', state !== 'recording');
+        recorderRerecordBtn.classList.toggle('hidden', state !== 'preview');
+        recorderSaveBtn.classList.toggle('hidden', state !== 'preview');
+        recorderPreviewContainer.classList.toggle('hidden', state !== 'preview');
+        recorderVisualizer.classList.toggle('is-recording', state === 'recording');
+        
+        if (state === 'idle') {
+            recorderTimer.textContent = '0.0 / 15.0';
+            recorderSoundName.value = '';
+        }
+    }
+    
     recordSoundHeaderButton.addEventListener('click', () => {
+        if(!getActiveSprite()) {
+            alert("יש לבחור דמות לפני הקלטת צליל.");
+            return;
+        }
         soundRecorderModal.classList.remove('hidden');
-        initSoundRecorder();
+        updateRecorderUI('idle');
+        hideRecorderMessage();
     });
 
     recorderCloseBtn.addEventListener('click', () => {
         stopRecording();
-        if (mediaStream) {
-            mediaStream.getTracks().forEach(track => track.stop());
-            mediaStream = null;
-        }
+        if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
         soundRecorderModal.classList.add('hidden');
-        resetRecorderUI();
     });
-    
+
     recorderRecordBtn.addEventListener('click', startRecording);
     recorderStopBtn.addEventListener('click', stopRecording);
-    recorderRerecordBtn.addEventListener('click', () => {
-        resetRecorderUI();
-        startRecording();
-    });
+    recorderRerecordBtn.addEventListener('click', () => updateRecorderUI('idle'));
+    recorderSaveBtn.addEventListener('click', saveRecording);
 
-    recorderSaveBtn.addEventListener('click', () => {
-        const sprite = getActiveSprite();
-        if (sprite && recordedBlob) {
-            const soundName = recorderSoundName.value.trim() || `הקלטה ${sprite.sounds.length + 1}`;
-            const soundUrl = URL.createObjectURL(recordedBlob);
-            addSoundToSprite(sprite, soundName, soundUrl);
-            renderSpriteSounds(sprite);
-            workspace.refreshToolboxSelection();
-            recorderCloseBtn.click();
-        }
-    });
 
-    // --- AI Wizard Logic ---
-    function createBlocksFromJson(jsonArray, parentConnection) {
-        let previousConnection = parentConnection;
-        jsonArray.forEach(blockData => {
-            const newBlock = createBlock(blockData);
-            if (newBlock) {
-                if (previousConnection) {
-                     previousConnection.connect(newBlock.previousConnection);
-                }
-                previousConnection = newBlock.nextConnection;
-            }
-        });
-    }
+    // --- File Upload Logic ---
+    function handleFileUpload(file, type) {
+        if (!file) return;
 
-    function createBlock(blockData) {
-        try {
-            if (!blockData || typeof blockData.type !== 'string') {
-                 console.warn('AI Wizard: Invalid block data received.', blockData);
-                 return null;
-            }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const dataUrl = e.target.result;
+            const name = file.name.split('.')[0];
             
-            const block = workspace.newBlock(blockData.type);
-    
-            if (!block) {
-                console.error(`AI Wizard: Failed to create block of type "${blockData.type}". This block type may not exist.`);
-                return null;
-            }
-        
-            if (blockData.params && typeof blockData.params === 'object') {
-                for (const paramName in blockData.params) {
-                    const paramValue = blockData.params[paramName];
-                    const input = block.getInput(paramName.toUpperCase());
-        
-                    if (input) {
-                        if (input.type === Blockly.inputTypes.STATEMENT) { // For loops (DO)
-                            if (Array.isArray(paramValue)) {
-                                createBlocksFromJson(paramValue, input.connection);
-                            }
-                        } else if (input.type === Blockly.inputTypes.VALUE) {
-                            let shadow;
-                            if (typeof paramValue === 'number') {
-                                shadow = workspace.newBlock('math_number');
-                                if (shadow) shadow.setFieldValue(paramValue, 'NUM');
-                            } else {
-                                shadow = workspace.newBlock('text');
-                                if (shadow) shadow.setFieldValue(String(paramValue), 'TEXT'); // Coerce to string
-                            }
-    
-                            if (shadow) {
-                                shadow.setShadow(true);
-                                shadow.initSvg();
-                                shadow.render();
-                                input.connection.connect(shadow.outputConnection);
-                            }
-                        }
-                    } else {
-                         try {
-                            block.setFieldValue(paramValue, paramName.toUpperCase());
-                         } catch (e) {
-                            console.warn(`Could not set field ${paramName.toUpperCase()} on block ${block.type}`);
-                         }
-                    }
+            if (type === 'sprite') {
+                createNewSprite(name, dataUrl, 0, 0);
+            } else if (type === 'backdrop') {
+                const newCard = createBackdropCard(dataUrl);
+                window.switchBackdrop(dataUrl);
+            } else if (type === 'sound') {
+                const sprite = getActiveSprite();
+                if (sprite) {
+                    addSoundsToSprite(sprite, [{ name: name, url: dataUrl }]);
+                } else {
+                     alert("יש לבחור דמות לפני העלאת צליל.");
                 }
             }
-            
-            block.initSvg();
-            block.render(); // Render immediately.
-            return block;
-        } catch (e) {
-            console.error("AI Wizard: An error occurred while creating a block from data:", blockData, e);
-            return null; // Ensure we always return null on failure.
-        }
+        };
+        reader.readAsDataURL(file);
     }
     
-    aiWizardButton.addEventListener('click', () => {
-        aiWizardModal.classList.remove('hidden');
-    });
-
-    aiWizardCloseBtn.addEventListener('click', () => aiWizardModal.classList.add('hidden'));
-
-    aiCreateCodeBtn.addEventListener('click', async () => {
-        const promptText = aiPromptTextarea.value.trim();
-        if (!promptText) {
-            alert("אנא כתוב מה תרצה שהדמות תעשה.");
-            return;
-        }
-    
-        aiWizardControls.classList.add('hidden');
-        aiWizardLoader.classList.remove('hidden');
-    
-        try {
-            // This is the new part: calling our backend proxy
-            const response = await fetch('/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: promptText }),
-            });
-            
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`שגיאת שרת: ${response.status} - ${errorText}`);
-            }
-
-            const blocksJson = await response.json();
-            
-            if (Array.isArray(blocksJson)) {
-                let y = 50;
-                const topBlocks = workspace.getTopBlocks(true);
-                if (topBlocks.length > 0) {
-                    const lastTopBlock = topBlocks[topBlocks.length-1];
-                    const lastBlockBounds = lastTopBlock.getSvgRoot().getBBox();
-                    y = lastTopBlock.getRelativeToSurfaceXY().y + lastBlockBounds.height + 30;
-                }
-                
-                let lastBlockInChain = null;
-                blocksJson.forEach(blockData => {
-                    const newBlock = createBlock(blockData);
-                    if (newBlock) { // Only proceed if block was created successfully
-                        if (lastBlockInChain) {
-                            if (lastBlockInChain.nextConnection) {
-                                lastBlockInChain.nextConnection.connect(newBlock.previousConnection);
-                            }
-                        } else {
-                            newBlock.moveTo(new Blockly.utils.Coordinate(50, y));
-                        }
-                        
-                        // Find the new end of the chain, which might include nested blocks
-                        let current = newBlock;
-                        while(current.getNextBlock()) {
-                            current = current.getNextBlock();
-                        }
-                        lastBlockInChain = current;
-                    }
-                });
-
-                workspace.render();
-                Blockly.svgResize(workspace);
-                aiWizardModal.classList.add('hidden');
-            } else {
-                throw new Error("השרת לא החזיר מערך בלוקים תקין.");
-            }
-    
-        } catch (error) {
-            console.error("Error with AI Wizard:", error);
-            alert("אוי, הקוסם התבלבל. נסה שוב או נסח את הבקשה קצת אחרת. " + error.message);
-        } finally {
-            aiWizardLoader.classList.add('hidden');
-            aiWizardControls.classList.remove('hidden');
-            aiPromptTextarea.value = '';
-        }
-    });
-
-
-    // --- General Initialization ---
-    function init() {
-        backdropsList.addEventListener('click', handleBackdropSelection);
-        document.getElementById('add-backdrop-button').addEventListener('click', () => openGallery(backgroundGallery));
-        document.getElementById('upload-backdrop-header-button').addEventListener('click', () => document.getElementById('backdrop-upload-input').click());
-        document.getElementById('backdrop-upload-input').addEventListener('change', (e) => {
-             const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const newCard = createBackdropCard(event.target.result);
-                    window.switchBackdrop(event.target.result);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        document.getElementById('close-gallery-button').addEventListener('click', () => backgroundGallery.classList.remove('visible'));
-        document.getElementById('thumbnails-grid').addEventListener('click', handleGallerySelection);
-        
+    // --- Gallery Initialization and Listeners ---
+    function initGalleries() {
         document.getElementById('add-sprite-button').addEventListener('click', () => openGallery(spriteGallery));
         document.getElementById('upload-sprite-header-button').addEventListener('click', () => document.getElementById('sprite-upload-input').click());
-        document.getElementById('sprite-upload-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    createNewSprite(file.name.replace(/\.[^/.]+$/, ''), event.target.result);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+        document.getElementById('sprite-upload-input').addEventListener('change', (e) => handleFileUpload(e.target.files[0], 'sprite'));
         document.getElementById('close-sprite-gallery-button').addEventListener('click', () => spriteGallery.classList.remove('visible'));
         document.getElementById('sprite-thumbnails-grid').addEventListener('click', handleSpriteGallerySelection);
-
-        // Sound System event listeners
-        addSoundButton.addEventListener('click', () => {
-            populateSoundGallery();
-            selectedSoundsForAdd.clear();
-            document.querySelectorAll('.sound-thumbnail.selected-for-add').forEach(el => el.classList.remove('selected-for-add'));
-            document.querySelectorAll('.sound-thumbnail-checkbox').forEach(cb => cb.checked = false);
-            openGallery(soundGallery);
-        });
-        uploadSoundHeaderButton.addEventListener('click', () => soundUploadInput.click());
-        soundUploadInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            const sprite = getActiveSprite();
-            if (file && sprite) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    addSoundToSprite(sprite, file.name, event.target.result);
-                    renderSpriteSounds(sprite);
-                    workspace.refreshToolboxSelection();
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        closeSoundGalleryButton.addEventListener('click', () => {
-            if (currentPreviewAudio) {
-                currentPreviewAudio.pause();
-                currentPreviewAudio = null;
-            }
-            soundGallery.classList.remove('visible');
-        });
-
-        // Initialize Character Creator
-        window.characterCreator = initCharacterCreator({ 
-            onSave: (result) => {
-                if (result.editingSpriteId && sprites[result.editingSpriteId]) {
-                    // Update existing sprite
-                    const spriteToUpdate = sprites[result.editingSpriteId];
-                    spriteToUpdate.imageUrl = result.dataUrl;
-                    spriteToUpdate.characterData = result.characterData;
-                    
-                    // Update DOM elements
-                    const cardImg = document.querySelector(`.sprite-card[data-sprite-id="${result.editingSpriteId}"] img`);
-                    const stageImg = document.querySelector(`#container-${result.editingSpriteId} .sprite-wrapper img`);
-                    if(cardImg) cardImg.src = result.dataUrl;
-                    if(stageImg) stageImg.src = result.dataUrl;
-                } else {
-                    // Create new sprite
-                    createNewSprite(result.name || 'דמות חדשה', result.dataUrl, 0, 0, true, result.characterData);
-                }
-            },
-            getSprite: (id) => sprites[id] 
-        });
-        document.getElementById('create-sprite-header-button').addEventListener('click', () => window.characterCreator.open());
-
-        setupPropertiesPanelListeners();
-        createDefaultBackdrop();
-        createDefaultSprite();
         
-        requestAnimationFrame(tick);
+        document.getElementById('create-sprite-header-button').addEventListener('click', () => {
+            if (window.characterCreator) {
+                window.characterCreator.open();
+            }
+        });
+
+        document.getElementById('add-backdrop-button').addEventListener('click', () => openGallery(backgroundGallery));
+        document.getElementById('upload-backdrop-header-button').addEventListener('click', () => document.getElementById('backdrop-upload-input').click());
+        document.getElementById('backdrop-upload-input').addEventListener('change', (e) => handleFileUpload(e.target.files[0], 'backdrop'));
+        document.getElementById('close-gallery-button').addEventListener('click', () => backgroundGallery.classList.remove('visible'));
+        backdropsList.addEventListener('click', handleBackdropSelection);
+        document.getElementById('thumbnails-grid').addEventListener('click', handleGallerySelection);
+        
+        uploadSoundHeaderButton.addEventListener('click', () => soundUploadInput.click());
+        soundUploadInput.addEventListener('change', (e) => handleFileUpload(e.target.files[0], 'sound'));
     }
 
-    init();
+    // --- Character Creator Integration ---
+    window.characterCreator = initCharacterCreator({
+        getSprite: (spriteId) => sprites[spriteId],
+        onSave: ({ name, dataUrl, characterData, editingSpriteId }) => {
+            if (editingSpriteId && sprites[editingSpriteId]) {
+                // Update existing sprite
+                const sprite = sprites[editingSpriteId];
+                sprite.imageUrl = dataUrl;
+                sprite.characterData = characterData;
+                
+                // Update on stage
+                const wrapper = document.getElementById(sprite.id);
+                if(wrapper) wrapper.querySelector('img').src = dataUrl;
+
+                // Update card
+                const card = document.querySelector(`.sprite-card[data-sprite-id="${sprite.id}"]`);
+                if(card) card.querySelector('img').src = dataUrl;
+            } else {
+                 // Create new sprite
+                const newName = name || `דמות ${Object.keys(sprites).length + 1}`;
+                createNewSprite(newName, dataUrl, 0, 0, true, characterData);
+            }
+        }
+    });
+
+    // --- Layer Control Logic ---
+    window.changeSpriteLayer = (sprite, action) => {
+        if (!sprite) return;
+        const sortedSprites = Object.values(sprites).sort((a, b) => (a.zIndex || 10) - (b.zIndex || 10));
+        const currentIndex = sortedSprites.findIndex(s => s.id === sprite.id);
+        if (currentIndex === -1) return;
+
+        switch (action) {
+            case 'FRONT':
+                if (currentIndex < sortedSprites.length - 1) {
+                    const topZ = sortedSprites[sortedSprites.length - 1].zIndex;
+                    sprite.zIndex = topZ + 1;
+                    window.refreshSprite(sprite);
+                }
+                break;
+            case 'BACK':
+                if (currentIndex > 0) {
+                    const bottomZ = sortedSprites[0].zIndex;
+                    sprite.zIndex = bottomZ - 1;
+                    window.refreshSprite(sprite);
+                }
+                break;
+            case 'FORWARD':
+                if (currentIndex < sortedSprites.length - 1) {
+                    const nextSprite = sortedSprites[currentIndex + 1];
+                    [sprite.zIndex, nextSprite.zIndex] = [nextSprite.zIndex, sprite.zIndex];
+                    window.refreshSprite(sprite);
+                    window.refreshSprite(nextSprite);
+                }
+                break;
+            case 'BACKWARD':
+                if (currentIndex > 0) {
+                    const prevSprite = sortedSprites[currentIndex - 1];
+                    [sprite.zIndex, prevSprite.zIndex] = [prevSprite.zIndex, sprite.zIndex];
+                    window.refreshSprite(sprite);
+                    window.refreshSprite(prevSprite);
+                }
+                break;
+        }
+    };
+    
+    // --- Add unload listener ---
+    window.addEventListener('beforeunload', (event) => {
+        // Standard way to trigger the browser's own confirmation dialog.
+        event.preventDefault(); // Required for some browsers.
+        event.returnValue = 'האם אתה בטוח? שינויים שביצעת עלולים שלא להישמר.'; // Required for legacy browsers.
+    });
+
+
+    // --- App Initialization ---
+    setupPropertiesPanelListeners();
+    initGalleries();
+    createDefaultBackdrop();
+    createDefaultSprite();
+    requestAnimationFrame(tick);
 });
