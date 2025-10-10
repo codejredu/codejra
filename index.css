@@ -293,8 +293,30 @@
             width: 12px;
             height: 12px;
         }
+        .duplicate-button {
+            position: absolute;
+            bottom: -8px;
+            left: -8px;
+            background-color: #f59e0b; /* Amber */
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .duplicate-button svg {
+            width: 12px;
+            height: 12px;
+        }
         .sprite-card:hover .delete-button,
         .sprite-card:hover .edit-button,
+        .sprite-card:hover .duplicate-button,
         .backdrop-card:hover .delete-button,
         .sound-card:hover .delete-button {
             visibility: visible;

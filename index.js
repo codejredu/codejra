@@ -687,6 +687,45 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function createAndAttachSpriteCard(spriteData) {
+        const { id, name, imageUrl, isCustom } = spriteData;
+
+        const spriteCard = document.createElement('div');
+        spriteCard.classList.add('sprite-card');
+        spriteCard.dataset.spriteId = id;
+        spriteCard.innerHTML = `
+            <img src="${imageUrl}" alt="${name}">
+            <div class="delete-button">X</div>
+            <div class="duplicate-button" title="שכפל">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+            </div>
+            ${isCustom ? `
+                <div class="edit-button" title="ערוך דמות">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                        <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
+                    </svg>
+                </div>` : ''}
+        `;
+        spritesList.appendChild(spriteCard);
+
+        // Attach listeners
+        spriteCard.addEventListener('click', () => setActiveSprite(id));
+        spriteCard.querySelector('.delete-button').addEventListener('click', (e) => { e.stopPropagation(); deleteSprite(id); });
+        spriteCard.querySelector('.duplicate-button').addEventListener('click', (e) => { e.stopPropagation(); duplicateSprite(id); });
+        
+        if (isCustom && window.characterCreator) {
+            spriteCard.querySelector('.edit-button').addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.characterCreator.openForEdit(id);
+            });
+        }
+
+        return spriteCard;
+    }
+
     const createNewSprite = (name, imageUrl, initialX = 0, initialY = 0, isCustom = false, characterData = null, gifSpeed = 1.0) => {
         const id = `sprite-${Date.now()}`;
         const isGif = imageUrl.toLowerCase().endsWith('.gif') || imageUrl.startsWith('data:image/gif');
@@ -713,28 +752,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         sprites[id] = spriteData;
 
-        const spriteCard = document.createElement('div');
-        spriteCard.classList.add('sprite-card');
-        spriteCard.dataset.spriteId = id;
-        spriteCard.innerHTML = `
-            <img src="${imageUrl}" alt="${name}">
-            <div class="delete-button">X</div>
-             ${isCustom ? `
-                <div class="edit-button" title="ערוך דמות">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                        <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
-                    </svg>
-                </div>` : ''}
-        `;
-        spritesList.appendChild(spriteCard);
-        
-        if (isCustom && window.characterCreator) {
-            spriteCard.querySelector('.edit-button').addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.characterCreator.openForEdit(id);
-            });
-        }
+        createAndAttachSpriteCard(spriteData);
 
         const spriteContainer = document.createElement('div');
         spriteContainer.id = `container-${id}`;
@@ -764,14 +782,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         wrapper.addEventListener('mousedown', (e) => startDrag(e, id));
         wrapper.addEventListener('touchstart', (e) => startDrag(e, id));
-        
-        spriteCard.addEventListener('click', () => {
-            setActiveSprite(id);
-        });
-        spriteCard.querySelector('.delete-button').addEventListener('click', (e) => {
-            e.stopPropagation();
-            deleteSprite(id);
-        });
 
         setActiveSprite(id);
         updateSpriteAppearance(id);
@@ -802,6 +812,47 @@ document.addEventListener('DOMContentLoaded', () => {
         log(`הדמות ${id} נמחקה.`);
     };
     
+    const duplicateSprite = (sourceId) => {
+        const sourceSprite = sprites[sourceId];
+        if (!sourceSprite) return;
+
+        // 1. Find a unique name
+        let newName = sourceSprite.name;
+        const baseName = newName.replace(/\d+$/, ''); // Remove trailing numbers
+        let counter = 2;
+        const allNames = Object.values(sprites).map(s => s.name);
+        
+        do {
+            newName = `${baseName}${counter}`;
+            counter++;
+        } while (allNames.includes(newName));
+
+        // 2. Deep copy and modify data
+        const newId = `sprite-${Date.now()}`;
+        
+        // Exclude non-serializable animation property before cloning
+        const { animation, ...serializableSource } = sourceSprite;
+        const newData = JSON.parse(JSON.stringify(serializableSource));
+
+        newData.id = newId;
+        newData.name = newName;
+        newData.x += 20;
+        newData.y -= 20; // Offset up and to the right
+        newData.zIndex = nextZIndex++;
+        newData.animation = null; // Ensure animation is null for recreation
+
+        // 3. Create the new sprite using the copied data
+        loadSpriteFromData(newData);
+
+        // 4. Set the new sprite as active
+        setActiveSprite(newId);
+        
+        log(`הדמות '${sourceSprite.name}' שוכפלה ל-'${newName}'.`);
+        
+        // 5. Reset the run/stop buttons to the initial state.
+        stopAllScripts();
+    };
+
     const setActiveSprite = (spriteId) => {
         if ((scriptRunner && scriptRunner.isRunning) || activeSpriteId === spriteId) return;
 
@@ -2860,22 +2911,8 @@ document.addEventListener('DOMContentLoaded', () => {
         spriteData.zIndex = zIndex || nextZIndex++; // Use loaded zIndex or assign a new one
         sprites[id] = spriteData;
 
-        const spriteCard = document.createElement('div');
-        spriteCard.classList.add('sprite-card');
-        spriteCard.dataset.spriteId = id;
-        spriteCard.innerHTML = `
-            <img src="${imageUrl}" alt="${name}">
-            <div class="delete-button">X</div>
-             ${isCustom ? `
-                <div class="edit-button" title="ערוך דמות">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                        <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
-                    </svg>
-                </div>` : ''}
-        `;
-        spritesList.appendChild(spriteCard);
-
+        createAndAttachSpriteCard(spriteData);
+        
         const spriteContainer = document.createElement('div');
         spriteContainer.id = `container-${id}`;
         spriteContainer.classList.add('sprite-container');
@@ -2899,16 +2936,6 @@ document.addEventListener('DOMContentLoaded', () => {
         wrapper.addEventListener('click', (e) => { e.stopPropagation(); if (justDragged) return; handleSpriteClick(id); });
         wrapper.addEventListener('mousedown', (e) => startDrag(e, id));
         wrapper.addEventListener('touchstart', (e) => startDrag(e, id));
-        
-        spriteCard.addEventListener('click', () => setActiveSprite(id));
-        spriteCard.querySelector('.delete-button').addEventListener('click', (e) => { e.stopPropagation(); deleteSprite(id); });
-        if (isCustom && window.characterCreator) {
-            spriteCard.querySelector('.edit-button').addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.characterCreator.openForEdit(id);
-            });
-        }
-
 
         updateSpriteAppearance(id);
     };
